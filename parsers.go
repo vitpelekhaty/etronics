@@ -53,11 +53,11 @@ type Archive struct {
 }
 
 // ParseConsumerDevices возвращает результат разбора ответа при вызове метода GetConsumerDevices API
-func ParseConsumerDevices(data []byte) ([]*Device, error) {
+func ParseConsumerDevices(data []byte) (chan *Device, error) {
 	return nil, nil
 }
 
 // ParseArchive возвращает результат разбора ответа при вызове метода GetArchiveJson API
-func ParseArchive(data []byte) ([]*Archive, error) {
+func ParseArchive(data []byte) (chan *Archive, error) {
 	return nil, nil
 }

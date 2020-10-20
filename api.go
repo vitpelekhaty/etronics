@@ -2,6 +2,7 @@ package etronics
 
 import (
 	"net/url"
+	"path"
 )
 
 const (
@@ -10,18 +11,30 @@ const (
 	methodGetArchiveJson     = `Reports/GetArchiveJson`
 )
 
-func (c *Connection) login(URL url.URL, username, password string) (string, error) {
+func (c *Connection) login(u *url.URL, username, password string) (string, error) {
 	return "", nil
 }
 
-func (c *Connection) consumerDevices(URL url.URL) ([]byte, error) {
-	return c.get(URL)
+func (c *Connection) consumerDevices(u *url.URL) ([]byte, error) {
+	return c.get(u)
 }
 
-func (c *Connection) archive(URL url.URL) ([]byte, error) {
-	return c.get(URL)
+func (c *Connection) archive(u *url.URL) ([]byte, error) {
+	return c.get(u)
 }
 
-func (c *Connection) get(URL url.URL) ([]byte, error) {
+func (c *Connection) get(u *url.URL) ([]byte, error) {
 	return nil, nil
+}
+
+func join(rawURL string, elem string) (string, error) {
+	u, err := url.Parse(rawURL)
+
+	if err != nil {
+		return rawURL, err
+	}
+
+	u.Path = path.Join(u.Path, elem)
+
+	return u.String(), nil
 }
