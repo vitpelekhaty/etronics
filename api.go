@@ -1,6 +1,7 @@
 package etronics
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -38,23 +39,35 @@ func (c *Connection) login(u *url.URL, user, password string) (string, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
-		token, err := ioutil.ReadAll(resp.Body)
+		b, err := ioutil.ReadAll(resp.Body)
 
 		if err != nil {
 			return "", err
 		}
 
-		return string(token), nil
+		var token string
+
+		err = json.Unmarshal(b, &token)
+
+		return token, err
 	}
 
-	message, err := ioutil.ReadAll(resp.Body)
+	b, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
 		return "", err
 	}
 
-	if strings.TrimSpace(string(message)) != "" {
-		return "", fmt.Errorf("login error %d (%s): %s", resp.StatusCode, resp.Status, string(message))
+	var message string
+
+	err = json.Unmarshal(b, &message)
+
+	if err != nil {
+		return "", err
+	}
+
+	if strings.TrimSpace(message) != "" {
+		return "", fmt.Errorf("login error %d (%s): %s", resp.StatusCode, resp.Status, message)
 	}
 
 	return "", fmt.Errorf("login error %d (%s)", resp.StatusCode, resp.Status)
