@@ -47,6 +47,10 @@ func NewConnection(client *http.Client) (*Connection, error) {
 func (c *Connection) Open(rawURL string, username, password string) error {
 	c.Close()
 
+	if c.client == nil {
+		return errors.New("undefined HTTP client")
+	}
+
 	_, err := url.Parse(rawURL)
 
 	if err != nil {
@@ -91,6 +95,10 @@ func (c *Connection) Connected() bool {
 // ConsumerDevices возвращает результат обращения к методу GetConsumerDevices API.
 // Для разбора ответа используется функция ParseConsumerDevices
 func (c *Connection) ConsumerDevices() ([]byte, error) {
+	if c.client == nil {
+		return nil, errors.New("undefined HTTP client")
+	}
+
 	if !c.Connected() {
 		return nil, errors.New("no connection")
 	}
@@ -119,6 +127,10 @@ func (c *Connection) ConsumerDevices() ([]byte, error) {
 //
 // Для разбора ответа используется функция ParseArchive
 func (c *Connection) Archive(deviceID int, archive DataArchive, start, end time.Time) ([]byte, error) {
+	if c.client == nil {
+		return nil, errors.New("undefined HTTP client")
+	}
+
 	if !c.Connected() {
 		return nil, errors.New("no connection")
 	}
