@@ -34,7 +34,7 @@ type Archive struct {
 	// Channel номер канала прибора учета
 	Channel byte `json:"channelNum"`
 	// Time время полученных показаний прибора учета
-	Time Time `json:"dt"`
+	Time ArchiveTime `json:"dt"`
 	// M масса теплоносителя по трубе
 	M float32 `json:"M"`
 	// V объем теплоносителя по трубе
@@ -108,6 +108,51 @@ func ParseConsumerDevices(data []byte) <-chan struct {
 }
 
 // ParseArchive возвращает результат разбора ответа при вызове метода GetArchiveJson API
-func ParseArchive(data []byte) (chan *Archive, error) {
-	return nil, nil
+func ParseArchive(data []byte) <-chan struct {
+	*Archive
+	error
+} {
+	out := make(chan struct {
+		*Archive
+		error
+	})
+
+	go func() {
+		defer close(out)
+
+		decoder := json.NewDecoder(bytes.NewReader(data))
+
+		_, err := decoder.Token()
+
+		if err != nil {
+			out <- struct {
+				*Archive
+				error
+			}{nil, err}
+
+			return
+		}
+
+		for decoder.More() {
+			var archive Archive
+
+			err := decoder.Decode(&archive)
+
+			if err != nil {
+				out <- struct {
+					*Archive
+					error
+				}{nil, err}
+
+				break
+			}
+
+			out <- struct {
+				*Archive
+				error
+			}{&archive, nil}
+		}
+	}()
+
+	return out
 }

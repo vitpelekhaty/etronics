@@ -147,8 +147,8 @@ func (c *Connection) Archive(deviceID int, archive DataArchive, start, end time.
 		return nil, err
 	}
 
-	s := Time(start)
-	e := Time(end)
+	s := QueryTime(start)
+	e := QueryTime(end)
 
 	query := url.Values{}
 

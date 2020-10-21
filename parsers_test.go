@@ -30,3 +30,27 @@ func TestParseConsumerDevices(t *testing.T) {
 		}
 	}
 }
+
+func TestParseArchive(t *testing.T) {
+	_, exec, _, ok := runtime.Caller(0)
+
+	if !ok {
+		t.FailNow()
+	}
+
+	path := filepath.Join(filepath.Dir(exec), "/testdata/responses/archive.json")
+
+	archive, err := ioutil.ReadFile(path)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	a := ParseArchive(archive)
+
+	for v := range a {
+		if v.error != nil {
+			t.Fatal(v.error)
+		}
+	}
+}
