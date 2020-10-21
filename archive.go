@@ -30,3 +30,15 @@ func (a *DataArchive) UnmarshalJSON(b []byte) (err error) {
 
 	return
 }
+
+// ParseDataArchive определяет указанный в строке тип архива показаний прибора учета
+func ParseDataArchive(s string) (DataArchive, error) {
+	switch s {
+	case "HourArchive":
+		return HourArchive, nil
+	case "DailyArchive":
+		return DailyArchive, nil
+	default:
+		return UnknownArchive, fmt.Errorf("unknown type of archive")
+	}
+}

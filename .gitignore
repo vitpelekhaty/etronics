@@ -14,3 +14,6 @@
 # HTTP Responses
 testdata/*
 !testdata/responses
+
+# Shell scripts for testing
+*test*.sh
