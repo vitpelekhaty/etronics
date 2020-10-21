@@ -3,6 +3,8 @@ package etronics
 import (
 	"bytes"
 	"encoding/json"
+
+	"github.com/guregu/null"
 )
 
 // Device прибора учета тепловой энергии
@@ -36,23 +38,23 @@ type Archive struct {
 	// Time время полученных показаний прибора учета
 	Time ArchiveTime `json:"dt"`
 	// M масса теплоносителя по трубе
-	M float32 `json:"M"`
+	M null.Float `json:"M,omitempty"`
 	// V объем теплоносителя по трубе
-	V float32 `json:"V"`
+	V null.Float `json:"V,omitempty"`
 	// P давление в трубе
-	P float32 `json:"P"`
+	P null.Float `json:"P,omitempty"`
 	// T температура теплоносителя по трубе
-	T float32 `json:"T"`
+	T null.Float `json:"T,omitempty"`
 	// Ti время наработки прибора учета в часах
-	Ti float32 `json:"Ti"`
+	Ti null.Float `json:"Ti,omitempty"`
 	// Thw температура холодной воды
-	Thw float32 `json:"Txv"`
+	Thw null.Float `json:"Txv,omitempty"`
 	// Q тепловая энергия по всему вводу
-	Q float32 `json:"Q"`
+	Q null.Float `json:"Q,omitempty"`
 	// Q1 тепловая энергия по отоплению
-	Q1 float32 `json:"Q1"`
+	Q1 null.Float `json:"Q1,omitempty"`
 	// Q2 тепловая энергия по ГВС
-	Q2 float32 `json:"Q2"`
+	Q2 null.Float `json:"Q2,omitempty"`
 	// BadRow признак отсутствия записи в приборе учета
 	BadRow bool `json:"is_bad_row"`
 }
