@@ -7,6 +7,7 @@
 
 # Test binary, build with `go test -c`
 *.test
+bin/*
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
@@ -14,6 +15,7 @@
 # HTTP Responses
 testdata/*
 !testdata/responses
+testdata/trace
 
 # Shell scripts for testing
 *test*.sh

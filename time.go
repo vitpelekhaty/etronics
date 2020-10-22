@@ -13,7 +13,7 @@ type QueryTime time.Time
 type ArchiveTime time.Time
 
 const (
-	layoutQuery   = `02.01.2006 03`
+	layoutQuery   = `02.01.2006 15`
 	layoutArchive = `2006-01-02T15:04:05`
 )
 
@@ -33,8 +33,8 @@ func (t QueryTime) MarshalJSON() ([]byte, error) {
 }
 
 // String возвращает строковое представление значения типа QueryTime
-func (t *QueryTime) String() string {
-	v := time.Time(*t)
+func (t QueryTime) String() string {
+	v := time.Time(t)
 	return v.Format(layoutQuery)
 }
 
@@ -54,7 +54,7 @@ func (t ArchiveTime) MarshalJSON() ([]byte, error) {
 }
 
 // String возвращает строковое представление значения типа ArchiveTime
-func (t *ArchiveTime) String() string {
-	v := time.Time(*t)
+func (t ArchiveTime) String() string {
+	v := time.Time(t)
 	return v.Format(layoutArchive)
 }

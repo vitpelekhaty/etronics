@@ -3,11 +3,15 @@
 package etronics
 
 import (
+	"encoding/json"
 	"flag"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/vitpelekhaty/httptracer"
 )
 
 var (
@@ -36,6 +40,8 @@ func init() {
 }
 
 func TestConnection(t *testing.T) {
+	t.Log("validating flags...")
+
 	if strings.TrimSpace(rawURL) == "" {
 		t.Fatal("no API url")
 	}
@@ -64,7 +70,59 @@ func TestConnection(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	t.Log("preparing http client...")
+
 	client := &http.Client{Timeout: timeout}
+
+	if strings.TrimSpace(tracePath) != "" {
+		tf, err := os.Create(tracePath)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		defer func() {
+			tf.WriteString("]")
+			tf.Close()
+		}()
+
+		_, err = tf.WriteString("[")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		emptyTrace := true
+
+		client = httptracer.Trace(client, httptracer.WithBodies(true),
+			httptracer.WithCallback(func(entry *httptracer.Entry) {
+				if entry == nil {
+					return
+				}
+
+				b, err := json.Marshal(entry)
+
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				if !emptyTrace {
+					_, err = tf.WriteString(",")
+
+					if err != nil {
+						t.Fatal(err)
+					}
+				}
+
+				_, err = tf.Write(b)
+
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				emptyTrace = false
+			}))
+	}
 
 	conn, err := NewConnection(client)
 
@@ -72,13 +130,21 @@ func TestConnection(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	t.Log("Logging in...")
+
 	err = conn.Open(rawURL, user, password)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	defer conn.Close()
+	defer func() {
+		t.Log("disconnecting...")
+
+		conn.Close()
+	}()
+
+	t.Log("Reading a list of devices...")
 
 	d, err := conn.ConsumerDevices()
 
@@ -89,6 +155,8 @@ func TestConnection(t *testing.T) {
 	devchan := ParseConsumerDevices(d)
 
 	var devCount uint
+
+	t.Log("Reading archives...")
 
 	for device := range devchan {
 		if device.error != nil {
