@@ -1,0 +1,24 @@
+[
+  {
+    "DeviceId": 4873,
+    "Address": "Новокузнецк г, Обнорского ул, 44",
+    "SerialNumber": "17-056027",
+    "DeviceTypeId": 23,
+    "DeviceTypeName": "ТВ-7",
+    "VendorName": "Термотроник",
+    "Vvods": [
+      1
+    ]
+  },
+  {
+    "DeviceId": 6509,
+    "Address": "Новокузнецк г, Народная ул, 15",
+    "SerialNumber": "17-055737",
+    "DeviceTypeId": 23,
+    "DeviceTypeName": "ТВ-7",
+    "VendorName": "Термотроник",
+    "Vvods": [
+      1
+    ]
+  }
+]
