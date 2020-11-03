@@ -31,6 +31,18 @@ func (a *DataArchive) UnmarshalJSON(b []byte) (err error) {
 	return
 }
 
+// String возвращает строковое представление значения архива показаний прибора учета
+func (a DataArchive) String() string {
+	switch a {
+	case HourArchive:
+		return "HourArchive"
+	case DailyArchive:
+		return "DailyArchive"
+	default:
+		return ""
+	}
+}
+
 // ParseDataArchive определяет указанный в строке тип архива показаний прибора учета
 func ParseDataArchive(s string) (DataArchive, error) {
 	switch s {
