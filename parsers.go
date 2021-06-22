@@ -2,6 +2,7 @@ package etronics
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
 	"github.com/guregu/null"
@@ -64,6 +65,14 @@ func ParseConsumerDevices(data []byte) <-chan struct {
 	*Device
 	error
 } {
+	return ParseConsumerDevicesWithContext(context.Background(), data)
+}
+
+// ParseConsumerDevicesWithContext возвращает результат разбора ответа при вызове метода GetConsumerDevices API
+func ParseConsumerDevicesWithContext(ctx context.Context, data []byte) <-chan struct {
+	*Device
+	error
+} {
 	out := make(chan struct {
 		*Device
 		error
@@ -77,32 +86,36 @@ func ParseConsumerDevices(data []byte) <-chan struct {
 		_, err := decoder.Token()
 
 		if err != nil {
-			out <- struct {
-				*Device
-				error
-			}{nil, err}
-
 			return
 		}
 
-		for decoder.More() {
-			var device Device
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				if !decoder.More() {
+					return
+				}
 
-			err := decoder.Decode(&device)
+				var device Device
 
-			if err != nil {
+				err := decoder.Decode(&device)
+
+				if err != nil {
+					out <- struct {
+						*Device
+						error
+					}{nil, err}
+
+					break
+				}
+
 				out <- struct {
 					*Device
 					error
-				}{nil, err}
-
-				break
+				}{&device, nil}
 			}
-
-			out <- struct {
-				*Device
-				error
-			}{&device, nil}
 		}
 	}()
 
@@ -111,6 +124,14 @@ func ParseConsumerDevices(data []byte) <-chan struct {
 
 // ParseArchive возвращает результат разбора ответа при вызове метода GetArchiveJson API
 func ParseArchive(data []byte) <-chan struct {
+	*Archive
+	error
+} {
+	return ParseArchiveWithContext(context.Background(), data)
+}
+
+// ParseArchiveWithContext возвращает результат разбора ответа при вызове метода GetArchiveJson API
+func ParseArchiveWithContext(ctx context.Context, data []byte) <-chan struct {
 	*Archive
 	error
 } {
@@ -127,32 +148,36 @@ func ParseArchive(data []byte) <-chan struct {
 		_, err := decoder.Token()
 
 		if err != nil {
-			out <- struct {
-				*Archive
-				error
-			}{nil, err}
-
 			return
 		}
 
-		for decoder.More() {
-			var archive Archive
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				if !decoder.More() {
+					return
+				}
 
-			err := decoder.Decode(&archive)
+				var archive Archive
 
-			if err != nil {
+				err := decoder.Decode(&archive)
+
+				if err != nil {
+					out <- struct {
+						*Archive
+						error
+					}{nil, err}
+
+					break
+				}
+
 				out <- struct {
 					*Archive
 					error
-				}{nil, err}
-
-				break
+				}{&archive, nil}
 			}
-
-			out <- struct {
-				*Archive
-				error
-			}{&archive, nil}
 		}
 	}()
 
