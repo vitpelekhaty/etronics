@@ -167,6 +167,8 @@ func TestConnection(t *testing.T) {
 			continue
 		}
 
+		t.Logf("reading archives for device %s %s", device.Type, device.Serial)
+
 		a, err := conn.Archive(device.ID, archiveType, start, end)
 
 		if err != nil {

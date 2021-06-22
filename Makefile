@@ -7,6 +7,6 @@ ut:
 
 it: ut
 	@echo "integration testing..."
-	go test -v -timeout 30s . -tags=integration -args ${params}
+	go test -v . -tags=integration -args ${params}
 
 test: it

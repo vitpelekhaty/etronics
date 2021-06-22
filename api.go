@@ -1,6 +1,7 @@
 package etronics
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -16,13 +17,13 @@ const (
 	methodGetArchiveJson     = `Reports/GetArchiveJson`
 )
 
-func (c *Connection) login(u *url.URL, user, password string) (string, error) {
+func (c *Connection) login(ctx context.Context, u *url.URL, user, password string) (string, error) {
 	form := url.Values{}
 
 	form.Add("Email", user)
 	form.Add("Password", password)
 
-	req, err := http.NewRequest("POST", u.String(), strings.NewReader(form.Encode()))
+	req, err := http.NewRequestWithContext(ctx, "POST", u.String(), strings.NewReader(form.Encode()))
 
 	if err != nil {
 		return "", err
@@ -73,16 +74,16 @@ func (c *Connection) login(u *url.URL, user, password string) (string, error) {
 	return "", fmt.Errorf("login error %d (%s)", resp.StatusCode, resp.Status)
 }
 
-func (c *Connection) consumerDevices(u *url.URL) ([]byte, error) {
-	return c.get(u)
+func (c *Connection) consumerDevices(ctx context.Context, u *url.URL) ([]byte, error) {
+	return c.get(ctx, u)
 }
 
-func (c *Connection) archive(u *url.URL) ([]byte, error) {
-	return c.get(u)
+func (c *Connection) archive(ctx context.Context, u *url.URL) ([]byte, error) {
+	return c.get(ctx, u)
 }
 
-func (c *Connection) get(u *url.URL) ([]byte, error) {
-	req, err := http.NewRequest("GET", u.String(), nil)
+func (c *Connection) get(ctx context.Context, u *url.URL) ([]byte, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", u.String(), nil)
 
 	if err != nil {
 		return nil, err
